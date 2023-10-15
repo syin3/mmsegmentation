@@ -1,3 +1,5 @@
+# python tools/train.py configs/deeplabv3plus/deeplabv3plus_r50-d8_4xb2-300k_mapillay_v1_65-1280x1280.py --resume --cfg-options load_from=checkpoints/deeplabv3plus_r50-d8_4xb2-300k_mapillay_v1_65-1280x1280_20230301_110504-655f8e43.pth
+
 _base_ = [
     '../_base_/models/deeplabv3plus_r50-d8.py',
     '../_base_/datasets/mapillary_v1_65.py',
@@ -9,11 +11,12 @@ data_preprocessor = dict(size=crop_size)
 model = dict(
     data_preprocessor=data_preprocessor,
     pretrained='open-mmlab://resnet50_v1c',
-    backbone=dict(depth=50),
+    # backbone=dict(depth=50),
+    backbone=dict(depth=50, frozen_stages=4),
     decode_head=dict(num_classes=65),
     auxiliary_head=dict(num_classes=65))
 
-iters = 300000
+iters = 300100
 # optimizer
 optimizer = dict(
     type='AdamW', lr=0.0001, betas=(0.9, 0.999), weight_decay=0.0001)
@@ -21,7 +24,7 @@ optimizer = dict(
 optim_wrapper = dict(
     type='OptimWrapper',
     optimizer=optimizer,
-    clip_grad=dict(max_norm=0.01, norm_type=2),
+    clip_grad=dict(max_norm=0.01, norm_type=2, _delete_=True),
     paramwise_cfg=dict(
         custom_keys={'backbone': dict(lr_mult=0.1, decay_mult=1.0)}))
 param_scheduler = [
@@ -55,4 +58,4 @@ train_dataloader = dict(batch_size=2)
 #   - `enable` means enable scaling LR automatically
 #       or not by default.
 #   - `base_batch_size` = (4 GPUs) x (2 samples per GPU).
-auto_scale_lr = dict(enable=False, base_batch_size=8)
+auto_scale_lr = dict(enable=False, base_batch_size=2)
