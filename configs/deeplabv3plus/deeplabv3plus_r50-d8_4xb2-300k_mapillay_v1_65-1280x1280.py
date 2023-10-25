@@ -2,7 +2,8 @@
 
 _base_ = [
     '../_base_/models/deeplabv3plus_r50-d8.py',
-    '../_base_/datasets/mapillary_v1_65.py',
+    # '../_base_/datasets/mapillary_v1_65.py',
+    '../_base_/datasets/mapillary_v2_small.py',
     '../_base_/default_runtime.py',
 ]
 
@@ -13,10 +14,12 @@ model = dict(
     pretrained='open-mmlab://resnet50_v1c',
     # backbone=dict(depth=50),
     backbone=dict(depth=50, frozen_stages=4),
-    decode_head=dict(num_classes=65),
-    auxiliary_head=dict(num_classes=65))
+    decode_head=dict(num_classes=5),
+    auxiliary_head=dict(num_classes=5))
 
-iters = 300100
+# epochs - scan through the whole dataset
+# iterations - scan through a batch
+iters = 300000
 # optimizer
 optimizer = dict(
     type='AdamW', lr=0.0001, betas=(0.9, 0.999), weight_decay=0.0001)
