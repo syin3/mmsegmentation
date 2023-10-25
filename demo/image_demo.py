@@ -38,6 +38,7 @@ def main():
         opacity=args.opacity,
         draw_gt=False,
         show=False if args.out_file is not None else True,
+        withLabels=False,
         out_file=args.out_file)
 
 
